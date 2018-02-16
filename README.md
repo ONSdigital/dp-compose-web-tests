@@ -8,10 +8,10 @@ It it is recommended that you adjust your docker preferences to provision with
 
 ### Environment variables
 
-You will need to have the following environment variables set to run the web tests:
+You will need to have the following environment variables set correctly to run the web tests:
 
-- export AWS_ACCESS_KEY_ID=<YOUR ACCESS KEY>
-- export AWS_SECRET_ACCESS_KEY:<YOUR SECRET KEY>
+- export AWS_ACCESS_KEY_ID=
+- export AWS_SECRET_ACCESS_KEY=
 
 Once this is completed you can simply run the tests using the run script:
 
