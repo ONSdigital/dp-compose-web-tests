@@ -1,0 +1,45 @@
+version: '2'
+services:
+  hub:
+    image: selenium/hub:2.53.1-beryllium
+    ports:
+      - "4444:4444"
+    environment:
+      GRID_BROWSER_TIMEOUT: 120000
+      GRID_TIMEOUT: 120000
+      VIRTUAL_HOST: selenium.hub.docker
+
+  firefox:
+    image: selenium/node-firefox:2.53.1-beryllium
+    environment: &SELENIUM_NODE_ENV
+      # this is a necessary workaround due to a known bug
+      # https://github.com/SeleniumHQ/docker-selenium/issues/133
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+    depends_on:
+      - hub
+
+  chrome:
+    image: selenium/node-chrome:2.53.1-beryllium
+    environment:
+      <<: *SELENIUM_NODE_ENV
+    depends_on:
+      - hub
+  
+  nightwatch:
+    build:
+      context: .
+    privileged: true
+    environment:
+      NODE_ENV: test
+      ROUTER_URL: http://dp-frontend-router:20000
+      MONGODB_URL: mongodb://mongodb:27017
+      FLORENCE_URL: http://florence:8081
+      IMPORT_API_URL: http://dp-import-api:21800
+      DATASET_API_URL: http://dp-dataset-api:22000
+      ZEBEDEE_URL: http://zebedee:8082
+      DATASET_AUTH_TOKEN: FD0108EA-825D-411C-9B1D-41EF7727F465
+    depends_on:
+      - hub
+  
+

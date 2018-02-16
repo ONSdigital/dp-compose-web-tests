@@ -1,0 +1,223 @@
+version: "3.3"
+
+services:
+  dp-import-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-import-api:/go/src/github.com/ONSdigital/dp-import-api
+    working_dir: /go/src/github.com/ONSdigital/dp-import-api
+    command: bash -c "make debug"
+    ports:
+      - "21800:21800"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_IMPORTS_ADDR: mongodb://mongodb:27017
+      DATASET_API_URL: http://dp-dataset-api:22000
+      RECIPE_API_URL: "http://dp-recipe-api:22300"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-dataset-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-dataset-api:/go/src/github.com/ONSdigital/dp-dataset-api
+    working_dir: /go/src/github.com/ONSdigital/dp-dataset-api
+    command: bash -c "make debug"
+    ports:
+      - "22000:22000"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_BIND_ADDR: "mongodb://mongodb:27017"
+      CODE_LIST_API_URL: "http://dp-code-list-api:22400"
+      DATASET_API_URL: http://dp-dataset-api:22000
+      WEBSITE_URL: http://dp-frontend-router:20000
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-filter-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-filter-api:/go/src/github.com/ONSdigital/dp-filter-api
+    working_dir: /go/src/github.com/ONSdigital/dp-filter-api
+    command: bash -c "make debug"
+    ports:
+      - "22100:22100"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_BIND_ADDR: "mongodb://mongodb:27017"
+      DATASET_API_URL: "http://dp-dataset-api:22000"
+      HOST: dp-filter-api
+      NEO4J_BIND_ADDR: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-code-list-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-code-list-api:/go/src/github.com/ONSdigital/dp-code-list-api
+    working_dir: /go/src/github.com/ONSdigital/dp-code-list-api
+    command: bash -c "make debug"
+    ports:
+      - "21900:21900"
+    environment:
+      MONGODB_ADDR: "mongodb://mongodb:27017"
+      ZEBEDEE_URL: http://zebedee:8082
+    hostname: dp-dev
+  dp-hierarchy-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-hierarchy-api:/go/src/github.com/ONSdigital/dp-hierarchy-api
+    working_dir: /go/src/github.com/ONSdigital/dp-hierarchy-api
+    command: bash -c "make debug"
+    ports:
+      - "22600:22600"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_BIND_ADDR: "mongodb://mongodb:27017"
+      HIERARCHY_DATABASE_ADDRESS: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://zebedee:8082
+    hostname: dp-dev
+  dp-import-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-import-api:/go/src/github.com/ONSdigital/dp-import-api
+    working_dir: /go/src/github.com/ONSdigital/dp-import-api
+    command: bash -c "make debug"
+    ports:
+      - "21800:21800"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_IMPORTS_ADDR: mongodb://mongodb:27017
+      DATASET_API_URL: http://dp-dataset-api:22000
+      RECIPE_API_URL: "http://dp-recipe-api:22300"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-recipe-api:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-recipe-api:/go/src/github.com/ONSdigital/dp-recipe-api
+    working_dir: /go/src/github.com/ONSdigital/dp-recipe-api
+    command: bash -c "make debug"
+    ports:
+      - "22300:22300"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      MONGODB_IMPORTS_ADDR: mongodb://mongodb:27017
+      DATASET_API_URL: http://dp-dataset-api:22000
+      RECIPE_API_URL: "http://dp-recipe-api:22300"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-dimension-importer:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-dimension-importer:/go/src/github.com/ONSdigital/dp-dimension-importer
+    working_dir: /go/src/github.com/ONSdigital/dp-dimension-importer
+    command: bash -c "make debug"
+    ports:
+      - "21500:21500"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_ADDR: http://dp-dataset-api:22000
+      DB_URL: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-dimension-extractor:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-dimension-extractor:/go/src/github.com/ONSdigital/dp-dimension-extractor
+    working_dir: /go/src/github.com/ONSdigital/dp-dimension-extractor
+    command: bash -c "make debug"
+    ports:
+      - "21400:21400"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_URL: http://dp-dataset-api:22000
+      DB_URL: "bolt://neo4j:7687"
+      DIMENSION_EXTRACTOR_URL: "http://dp-dimension-extractor:21400"
+      ZEBEDEE_URL: http://zebedee:8082
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  dp-observation-importer:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-observation-importer:/go/src/github.com/ONSdigital/dp-observation-importer
+    working_dir: /go/src/github.com/ONSdigital/dp-observation-importer
+    command: bash -c "make debug"
+    ports:
+      - "21700:21700"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_URL: http://dp-dataset-api:22000
+      DATABASE_ADDRESS: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-observation-extractor:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-observation-extractor:/go/src/github.com/ONSdigital/dp-observation-extractor
+    working_dir: /go/src/github.com/ONSdigital/dp-observation-extractor
+    command: bash -c "make debug"
+    ports:
+      - "21600:21600"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_URL: http://dp-dataset-api:22000
+      DB_URL: "bolt://neo4j:7687"
+      DIMENSION_EXTRACTOR_URL: "http://dp-dimension-extractor:21400"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-dataset-exporter:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-dataset-exporter:/go/src/github.com/ONSdigital/dp-dataset-exporter
+    working_dir: /go/src/github.com/ONSdigital/dp-dataset-exporter
+    command: bash -c "make debug"
+    ports:
+      - "22500:22500"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_ADDR: http://dp-dataset-api:22000
+      IMPORT_API_ADDR: http://dp-import-api:21800
+      FILTER_API_URL: http://dp-filter-api:22100
+      DATABASE_ADDRESS: "bolt://neo4j:7687"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-dataset-exporter-xlsx:
+    image: maven:3-jdk-8
+    volumes:
+      - $HOME/dp-dataset-exporter-xlsx:/home/dp-dataset-exporter-xlsx
+    working_dir: /home/dp-dataset-exporter-xlsx
+    command: ./run.sh
+    ports:
+      - "22800:22800"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_ADDR: http://dp-dataset-api:22000
+      IMPORT_API_ADDR: http://dp-import-api:21800
+      FILTER_API_URL: http://dp-filter-api:22100
+      DATABASE_ADDRESS: "bolt://neo4j:7687"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  dp-hierarchy-builder:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-hierarchy-builder:/go/src/github.com/ONSdigital/dp-hierarchy-builder
+    working_dir: /go/src/github.com/ONSdigital/dp-hierarchy-builder
+    command: bash -c "make debug"
+    ports:
+      - "22700:22700"
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_ADDR: http://dp-dataset-api:22000
+      IMPORT_API_ADDR: http://dp-import-api:21800
+      FILTER_API_URL: http://dp-filter-api:22100
+      DATABASE_ADDRESS: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-import-tracker:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-import-tracker:/go/src/github.com/ONSdigital/dp-import-tracker
+    working_dir: /go/src/github.com/ONSdigital/dp-import-tracker
+    command: bash -c "sleep 10 && make debug"
+    ports:
+      - "21300:21300"
+    depends_on:
+      - dp-dataset-api
+    environment:
+      KAFKA_ADDR: "kafka1:9092"
+      DATASET_API_ADDR: http://dp-dataset-api:22000
+      IMPORT_API_ADDR: http://dp-import-api:21800
+      DATABASE_ADDRESS: "bolt://neo4j:7687"
+      ZEBEDEE_URL: http://dp-dataset-api:22000

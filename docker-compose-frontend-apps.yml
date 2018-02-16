@@ -1,0 +1,82 @@
+version: "3.3"
+
+services:
+  dp-frontend-router:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-frontend-router:/go/src/github.com/ONSdigital/dp-frontend-router
+    working_dir: /go/src/github.com/ONSdigital/dp-frontend-router
+    command: bash -c "make debug"
+    ports:
+      - "20000:20000"
+    hostname: dp-dev
+    environment:
+      RENDERER_URL: http://dp-frontend-renderer:20010
+      BABBAGE_URL: http://babbage:8080
+      PATTERN_LIBRARY_ASSETS_PATH: http://sixteens:9000
+      DATASET_CONTROLLER_URL: http://dp-frontend-dataset-controller:20200
+      FILTER_DATASET_CONTROLLER_URL: http://dp-frontend-filter-dataset-controller:20001
+      ZEBEDEE_URL: http://zebedee:8082
+  dp-frontend-renderer:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-frontend-renderer:/go/src/github.com/ONSdigital/dp-frontend-renderer
+    working_dir: /go/src/github.com/ONSdigital/dp-frontend-renderer
+    command: bash -c "make build && ./build/dp-frontend-renderer"
+    ports:
+      - "20010:20010"
+    hostname: dp-dev
+  dp-frontend-dataset-controller:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-frontend-dataset-controller:/go/src/github.com/ONSdigital/dp-frontend-dataset-controller
+    working_dir: /go/src/github.com/ONSdigital/dp-frontend-dataset-controller
+    command: bash -c "make debug"
+    ports:
+      - "20200:20200"
+    hostname: dp-dev
+    environment:
+      ZEBEDEE_URL: http://zebedee:8082
+      RENDERER_URL: http://dp-frontend-renderer:20010
+      FILTER_API_URL: http://dp-filter-api:22100
+      DATASET_API_URL: http://dp-dataset-api:22000
+  dp-frontend-filter-dataset-controller:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/dp-frontend-filter-dataset-controller:/go/src/github.com/ONSdigital/dp-frontend-filter-dataset-controller
+    working_dir: /go/src/github.com/ONSdigital/dp-frontend-filter-dataset-controller
+    command: bash -c "make debug"
+    ports:
+      - "20001:20001"
+    hostname: dp-dev
+    environment:
+      RENDERER_URL: http://dp-frontend-renderer:20010
+      FILTER_API_URL: http://dp-filter-api:22100
+      CODELIST_API_URL: http://dp-code-list-api:22400
+      DATASET_API_URL: http://dp-dataset-api:22000
+      HIERARCHY_API_URL: http://dp-hierarchy-api:22600
+      ZEBEDEE_URL: http://zebedee:8082
+  sixteens:
+    image: node:9.5.0
+    volumes:
+      - $HOME/sixteens:/home/sixteens
+    working_dir: /home/sixteens
+    command: bash -c "./run.sh"
+    ports:
+      - "9000:9000"
+  florence:
+    image: golang:1.9.4
+    volumes: 
+      - $GOPATH/src/github.com/ONSdigital/florence:/go/src/github.com/ONSdigital/florence
+    working_dir: /go/src/github.com/ONSdigital/florence
+    command: bash -c "make debug"
+    ports:
+      - "8081:8081"
+    environment:
+      ROUTER_URL: "http://dp-frontend-router:20000"
+      ZEBEDEE_URL: "http://zebedee:8082"
+      RECIPE_API_URL: "http://dp-recipe-api:22300"
+      IMPORT_API_URL: "http://dp-import-api:21800"
+      DATASET_API_URL: http://dp-dataset-api:22000
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}

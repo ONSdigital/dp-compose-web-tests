@@ -1,0 +1,21 @@
+version: "3.3"
+
+services:
+  zebedee:
+    image: maven:3-jdk-8
+    volumes:
+      - $HOME/zebedee:/home/zebedee
+    working_dir: /home/zebedee
+    command: bash -c "./run.sh"
+    ports:
+      - "8082:8082"
+    environment:
+      DATASET_API_URL: http://dp-dataset-api:22000
+  babbage:
+    image: maven:3-jdk-8
+    volumes:
+      - $HOME/babbage:/home/babbage
+    working_dir: /home/babbage
+    command: bash -c "./run.sh"
+    ports:
+      - "8080:8080"

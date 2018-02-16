@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Builds the nightwatch docker image
+
+docker-compose -f docker-compose-web-tests.yml build --pull nightwatch
+

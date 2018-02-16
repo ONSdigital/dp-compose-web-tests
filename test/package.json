@@ -1,0 +1,49 @@
+{
+    "name": "dp-web-tests",
+    "version": "1.0.0",
+    "description": "Automated tests for dp websites",
+    "main": "index.js",
+    "scripts": {
+      "start:chrome": "nightwatch --env docker_chrome; node create-html-report.js"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ONSdigital/dp-web-tests.git"
+    },
+    "keywords": [
+      "automated",
+      "testing",
+      "web"
+    ],
+    "author": "ONSdigital",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/ONSdigital/dp-web-tests/issues"
+    },
+    "homepage": "https://github.com/ONSdigital/dp-web-tests#readme",
+    "dependencies": {
+      "async-await": "^0.1.40",
+      "async-retry": "^1.1.4",
+      "chromedriver": "^2.32.2",
+      "cucumber": "^3.0.1",
+      "cucumber-html-reporter": "^3.0.1",
+      "edgedriver": "^4.15063.0",
+      "geckodriver": "^1.8.1",
+      "mongodb": "^2.2.31",
+      "nightwatch": "^0.9.16",
+      "nightwatch-allure-adapter": "^1.2.4",
+      "nightwatch-cucumber": "^8.0.10",
+      "phantomjs-prebuilt": "^2.1.15",
+      "request": "^2.83.0",
+      "request-promise": "^4.2.2",
+      "selenium": "^2.20.0",
+      "selenium-server": "^3.5.3",
+      "selenium-webdriver": "^3.5.0",
+      "sigmund": "^1.0.1",
+      "testarmada-magellan-nightwatch": "^4.1.2",
+      "universalify": "^0.1.1",
+      "wait-until": "0.0.2"
+    },
+    "devDependencies": {}
+  }
+  

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+container=nightwatch_results
+
+function cleanup() {
+  exit_code=$?
+
+  if [[ "$exit_code" == "1" ]]; then
+    printf "\n Test failure! View screenshots in tests_output/screenshots. \n"
+  fi
+}
+
+trap cleanup INT TERM EXIT
+
+docker-compose -f docker-compose-web-tests.yml run nightwatch
+
